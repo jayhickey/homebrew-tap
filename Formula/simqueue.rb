@@ -9,6 +9,7 @@ class Simqueue < Formula
   url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.4/simqueue-0.1.4-macos-arm64.tar.gz"
   sha256 "0480717ff305228d20119e733e0199c83965326dee9e7ea39284ae220bb12200"
   license "MIT"
+  revision 1
 
   depends_on arch: :arm64
   depends_on macos: :sonoma # macOS only (implies depends_on :macos)
@@ -16,7 +17,6 @@ class Simqueue < Formula
 
   def install
     bin.install "bin/simq", "bin/simqd"
-    prefix.install "SimQueue.app"
     doc.install "README.md", "LICENSE", "NOTICE", "AGENTS.md", "docs", "skills"
   end
 
@@ -37,10 +37,8 @@ class Simqueue < Formula
     <<~EOS
       SimQueue supports Apple Silicon Macs (arm64) only; Intel Macs are unsupported.
 
-      Optional menu bar app (copy before enabling Launch at Login):
-        mkdir -p ~/Applications
-        cp -R #{opt_prefix}/SimQueue.app ~/Applications/
-        open ~/Applications/SimQueue.app
+      Optional menu bar app (installed into Applications separately):
+        brew install --cask jayhickey/tap/simqueue-app
       Click the square.stack icon for the dashboard; right-click for quit/stop options.
 
       Set SimQueue up for this Mac (starter config and Xcode checks):
@@ -88,8 +86,6 @@ class Simqueue < Formula
     assert_equal version.to_s, shell_output("#{bin}/simqd --version").strip
     assert_equal doc.to_s, shell_output("#{bin}/simq docs").strip
     assert_match "SimQueue #{version} agent guide", shell_output("#{bin}/simq agent-guide")
-    assert_path_exists prefix/"SimQueue.app/Contents/MacOS/SimQueueApp"
-    system "/usr/bin/codesign", "--verify", "--strict", prefix/"SimQueue.app"
     assert_path_exists doc/"AGENTS.md"
     assert_path_exists doc/"docs/INSTALL.md"
     assert_path_exists doc/"skills/simqueue/SKILL.md"
