@@ -2,16 +2,12 @@
 # frozen_string_literal: true
 
 # SimQueue: one queue per Mac for Xcode builds, tests and iOS simulators.
-# Update url and sha256 after a verified SimQueue release.
-# Until the first release, url/sha256 are placeholders.
-require_relative "../lib/private_github_release_download_strategy"
 
 class Simqueue < Formula
   desc "Per-Mac queue and simulator pool for Xcode builds, tests and UI tests"
   homepage "https://github.com/jayhickey/SimQueue"
-  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.0/simqueue-0.1.0-macos-arm64.tar.gz",
-      using: SimqueuePrivateGitHubReleaseDownloadStrategy
-  sha256 "0000000000000000000000000000000000000000000000000000000000000000"
+  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.0/simqueue-0.1.0-macos-arm64.tar.gz"
+  sha256 "6ec26c43823cce6c8ef9fc04763c6089a20036c48ed671c080d146a085ba05cc"
   license "MIT"
 
   depends_on macos: :sonoma # macOS only (implies depends_on :macos)
@@ -20,6 +16,7 @@ class Simqueue < Formula
 
   def install
     bin.install "bin/simq", "bin/simqd"
+    doc.install "README.md", "LICENSE", "NOTICE", "AGENTS.md", "docs", "skills"
   end
 
   # `brew services start simqueue` runs simqd as a per-user LaunchAgent. Without it, simq
@@ -45,7 +42,8 @@ class Simqueue < Formula
         simq template build host
       Select the returned UDID as simctl.template in config.json, then drain and
       restart the daemon. One explicit device/runtime/template serves this Mac.
-      To opt into slimming, install simslim separately and use --slim.
+      To opt into slimming, install simslim separately and use --slim. Keep it
+      installed while the slimmed template is selected; new clones preserve its profile.
 
       simq starts its daemon (simqd) on demand. To use a login service instead,
       drain and stop that daemon, set "autostart": false in config.json, then:
@@ -62,6 +60,12 @@ class Simqueue < Formula
       Verify simq --version, simq status and simq doctor after restarting.
       A drain timeout leaves the admission gate set: inspect it or simq resume.
 
+      Offline instructions:
+        simq agent-guide
+        simq docs
+      Optional agent skill: copy $(simq docs)/skills/simqueue into your agent's
+      skill directory explicitly. Installation does not enable it automatically.
+
       State lives in ~/Library/Application Support/SimQueue.
       Inspect simq uninstall before using simq uninstall --yes. Simulator cleanup
       respects ownership and cleanup gates. Queue history, templates, config and
@@ -74,6 +78,11 @@ class Simqueue < Formula
   test do
     assert_equal version.to_s, shell_output("#{bin}/simq --version").strip
     assert_equal version.to_s, shell_output("#{bin}/simqd --version").strip
+    assert_equal doc.to_s, shell_output("#{bin}/simq docs").strip
+    assert_match "SimQueue #{version} agent guide", shell_output("#{bin}/simq agent-guide")
+    assert_path_exists doc/"AGENTS.md"
+    assert_path_exists doc/"docs/INSTALL.md"
+    assert_path_exists doc/"skills/simqueue/SKILL.md"
     # A fake-backend daemon starts and exits cleanly in a scratch state dir.
     output = shell_output("#{bin}/simqd run --foreground --backend fake --probe fake " \
                           "--exit-after-startup --state-dir #{testpath}/state")
