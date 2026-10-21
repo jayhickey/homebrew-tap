@@ -12,7 +12,7 @@ class Simqueue < Formula
   url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.0/simqueue-0.1.0-macos-arm64.tar.gz",
       using: SimqueuePrivateGitHubReleaseDownloadStrategy
   sha256 "0000000000000000000000000000000000000000000000000000000000000000"
-  license "Apache-2.0"
+  license "MIT"
 
   depends_on macos: :sonoma # macOS only (implies depends_on :macos)
   depends_on arch: :arm64
