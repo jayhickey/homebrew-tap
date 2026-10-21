@@ -9,12 +9,13 @@ require_relative "../lib/private_github_release_download_strategy"
 class Simqueue < Formula
   desc "Per-Mac queue and simulator pool for Xcode builds, tests and UI tests"
   homepage "https://github.com/jayhickey/SimQueue"
-  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.0/simqueue-0.1.0-macos-universal.tar.gz",
+  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.0/simqueue-0.1.0-macos-arm64.tar.gz",
       using: SimqueuePrivateGitHubReleaseDownloadStrategy
   sha256 "0000000000000000000000000000000000000000000000000000000000000000"
   license "Apache-2.0"
 
   depends_on macos: :sonoma # macOS only (implies depends_on :macos)
+  depends_on arch: :arm64
   # simslim is optional: users install it separately to opt in with template build --slim.
 
   def install
@@ -35,6 +36,8 @@ class Simqueue < Formula
 
   def caveats
     <<~EOS
+      SimQueue supports Apple Silicon Macs (arm64) only; Intel Macs are unsupported.
+
       Set SimQueue up for this Mac (starter config and Xcode checks):
         simq init
 

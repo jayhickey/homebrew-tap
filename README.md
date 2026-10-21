@@ -21,6 +21,8 @@ the project's documentation.
 
 **SimQueue availability:** its formula currently has a placeholder checksum and will
 be installable once the first release is published and the formula is updated.
+SimQueue supports Apple Silicon Macs (arm64) only; Intel Macs are unsupported.
+The planned release archive is `simqueue-<version>-macos-arm64.tar.gz`.
 
 The SimQueue beta repository is private. You need repository access and GitHub
 authentication for release-asset downloads as well as for tapping this repository.

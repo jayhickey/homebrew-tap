@@ -19,7 +19,7 @@ module GitHub::API
   end
 end
 
-url = "https://github.com/jayhickey/SimQueue/releases/download/v0.1.0-beta.1/simqueue-0.1.0-beta.1-macos-universal.tar.gz"
+url = "https://github.com/jayhickey/SimQueue/releases/download/v0.1.0-beta.1/simqueue-0.1.0-beta.1-macos-arm64.tar.gz"
 strategy = SimqueuePrivateGitHubReleaseDownloadStrategy.new(url, "simqueue", "0.1.0-beta.1")
 class << strategy
   attr_reader :download_arguments, :download_options
@@ -32,7 +32,7 @@ end
 begin
   GitHub::API.simqueue_test_token = "unit-test-placeholder-never-a-real-secret"
   GitHub::API.simqueue_test_release = {
-    "assets" => [{ "name" => "simqueue-0.1.0-beta.1-macos-universal.tar.gz",
+    "assets" => [{ "name" => "simqueue-0.1.0-beta.1-macos-arm64.tar.gz",
                    "url" => "https://api.github.com/repos/jayhickey/SimQueue/releases/assets/123" }],
   }
   strategy.send(:_fetch, url: url, resolved_url: url, timeout: 30)
@@ -64,7 +64,22 @@ begin
   rescue ArgumentError
     # Only this private repository receives credentials.
   end
-  puts "private release strategy: API selection, secret redaction, errors and host restrictions passed"
+  [
+    "v0.1.0-beta.1/simqueue-0.1.0-beta.1-macos-universal.tar.gz",
+    "v0.1.0-beta.1/simqueue-0.1.0-beta.1-macos-x86_64.tar.gz",
+    "v0.1.0-beta.1/simqueue-0.1.0-beta.2-macos-arm64.tar.gz",
+    "v0.1.0-beta.1/simqueue-0.1.0-beta.1-macos-arm64.tar.gz%3Ftoken=bad",
+  ].each do |asset|
+    begin
+      SimqueuePrivateGitHubReleaseDownloadStrategy.new(
+        "https://github.com/jayhickey/SimQueue/releases/download/#{asset}", "simqueue", "0.1.0-beta.1"
+      )
+      raise "unsupported architecture or mismatched asset unexpectedly accepted: #{asset}"
+    rescue ArgumentError
+      # Only the exact matching arm64 versioned asset is supported.
+    end
+  end
+  puts "private release strategy: arm64 asset selection, secret redaction, errors and URL restrictions passed"
 ensure
   class << GitHub::API
     alias_method :credentials, :original_credentials_for_simqueue_test

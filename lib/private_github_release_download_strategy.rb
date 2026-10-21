@@ -15,6 +15,10 @@ class SimqueuePrivateGitHubReleaseDownloadStrategy < CurlDownloadStrategy
 
     @release_tag = URI.decode_www_form_component(match[1])
     @asset_name = URI.decode_www_form_component(match[2])
+    asset = /\Asimqueue-([0-9][0-9A-Za-z.+-]*)-macos-arm64\.tar\.gz\z/.match(@asset_name)
+    unless asset && @release_tag == "v#{asset[1]}"
+      raise ArgumentError, "Expected an Apple Silicon SimQueue asset matching its versioned release tag"
+    end
     super
   end
 
