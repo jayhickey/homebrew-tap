@@ -22,6 +22,15 @@ the project's documentation.
 **SimQueue availability:** its formula currently has a placeholder checksum and will
 be installable once the first release is published and the formula is updated.
 
+The SimQueue beta repository is private. You need repository access and GitHub
+authentication for release-asset downloads as well as for tapping this repository.
+The formula uses Homebrew's GitHub credential discovery: an existing `gh auth login`
+session, or `HOMEBREW_GITHUB_API_TOKEN` with repository contents read access. Store
+credentials in your normal credential manager; do not put them in the formula, config
+or shell history. Authentication errors should be fixed before retrying installation.
+The tap-owned download strategy requests the exact versioned GitHub API asset and
+Homebrew checks its SHA-256. Public anonymous release downloads are not yet supported.
+
 Homebrew asks you to trust third-party taps before it loads their formulae. If `brew install`
 refuses, trust the specific formula with `brew trust --formula jayhickey/tap/<formula>`.
 

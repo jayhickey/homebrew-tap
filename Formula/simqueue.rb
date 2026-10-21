@@ -2,18 +2,20 @@
 # frozen_string_literal: true
 
 # SimQueue: one queue per Mac for Xcode builds, tests and iOS simulators.
-# The release workflow in jayhickey/SimQueue opens a PR here that bumps url and sha256 for
-# each v* tag (scripts/bump-formula.sh). Until the first release, url/sha256 are placeholders.
+# Update url and sha256 after a verified SimQueue release.
+# Until the first release, url/sha256 are placeholders.
+require_relative "../lib/private_github_release_download_strategy"
+
 class Simqueue < Formula
   desc "Per-Mac queue and simulator pool for Xcode builds, tests and UI tests"
   homepage "https://github.com/jayhickey/SimQueue"
-  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.0/simqueue-0.1.0-macos-universal.tar.gz"
+  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.0/simqueue-0.1.0-macos-universal.tar.gz",
+      using: SimqueuePrivateGitHubReleaseDownloadStrategy
   sha256 "0000000000000000000000000000000000000000000000000000000000000000"
   license "Apache-2.0"
 
   depends_on macos: :sonoma # macOS only (implies depends_on :macos)
-  # Slimmed simulator templates and clones. Lives in its maintainer's tap.
-  depends_on "mobai-app/tap/simslim"
+  # simslim is optional: users install it separately to opt in with template build --slim.
 
   def install
     bin.install "bin/simq", "bin/simqd"
@@ -21,28 +23,48 @@ class Simqueue < Formula
 
   # `brew services start simqueue` runs simqd as a per-user LaunchAgent. Without it, simq
   # starts simqd on demand. Pick one: with the service, set "autostart": false in the config
-  # (`simq init --launchd` writes that).
+  # before starting the Homebrew service.
   service do
-    run [opt_bin/"simqd", "run", "--foreground"]
+    run [opt_bin/"simqd", "run", "--foreground", "--log-file", "#{Dir.home}/Library/Application Support/SimQueue/simqd.log"]
     keep_alive true
-    log_path var/"log/simqd.log"
-    error_log_path var/"log/simqd.log"
+    log_path File::NULL
+    error_log_path File::NULL
     # simqd runs xcrun/simctl (/usr/bin) and simslim (Homebrew's bin).
     environment_variables PATH: std_service_path_env
   end
 
   def caveats
     <<~EOS
-      Set SimQueue up for this Mac (starter config, Xcode and simslim checks):
+      Set SimQueue up for this Mac (starter config and Xcode checks):
         simq init
 
-      simq starts its daemon (simqd) on demand. To keep simqd running as a login
-      service instead, set "autostart": false in the config, then:
-        brew services start simqueue
+      Build a stock template (simslim is optional):
+        simq template build host
+      Select the returned UDID as simctl.template in config.json, then drain and
+      restart the daemon. One explicit device/runtime/template serves this Mac.
+      To opt into slimming, install simslim separately and use --slim.
 
-      State (queue database, socket, logs, artifacts) lives in
-        ~/Library/Application Support/SimQueue
-      `simq uninstall --purge` removes it and the simq-* simulators SimQueue owns.
+      simq starts its daemon (simqd) on demand. To use a login service instead,
+      drain and stop that daemon, set "autostart": false in config.json, then:
+        brew services start simqueue
+      Choose one service method; do not run competing daemons.
+
+      Planned upgrades:
+        simq drain --timeout 30m
+        # Continue only after successful drain and a consistent backup (see INSTALL.md).
+        # Use SQLite online backup, or stop the drained daemon before copying its state.
+        brew upgrade simqueue
+        brew services restart simqueue
+      For on-demand startup, stop the drained PID and run simq status instead.
+      Verify simq --version, simq status and simq doctor after restarting.
+      A drain timeout leaves the admission gate set: inspect it or simq resume.
+
+      State lives in ~/Library/Application Support/SimQueue.
+      Inspect simq uninstall before using simq uninstall --yes. Simulator cleanup
+      respects ownership and cleanup gates. Queue history, templates, config and
+      artifacts are retained unless explicitly purged; --purge removes state.
+      See https://github.com/jayhickey/SimQueue/blob/main/docs/INSTALL.md for
+      legacy-state transitions, matching-backup rollback, and uninstall details.
     EOS
   end
 
