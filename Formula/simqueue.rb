@@ -6,16 +6,17 @@
 class Simqueue < Formula
   desc "Per-Mac queue and simulator pool for Xcode builds, tests and UI tests"
   homepage "https://github.com/jayhickey/SimQueue"
-  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.3/simqueue-0.1.3-macos-arm64.tar.gz"
-  sha256 "46066bccfd17423e97c0b93a7cafee8c43b377757f7e5a2d7e6ea3a0867bd9e7"
+  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.4/simqueue-0.1.4-macos-arm64.tar.gz"
+  sha256 "0480717ff305228d20119e733e0199c83965326dee9e7ea39284ae220bb12200"
   license "MIT"
 
-  depends_on macos: :sonoma # macOS only (implies depends_on :macos)
   depends_on arch: :arm64
+  depends_on macos: :sonoma # macOS only (implies depends_on :macos)
   # simslim is optional: users install it separately to opt in with template build --slim.
 
   def install
     bin.install "bin/simq", "bin/simqd"
+    prefix.install "SimQueue.app"
     doc.install "README.md", "LICENSE", "NOTICE", "AGENTS.md", "docs", "skills"
   end
 
@@ -23,7 +24,8 @@ class Simqueue < Formula
   # starts simqd on demand. Pick one: with the service, set "autostart": false in the config
   # before starting the Homebrew service.
   service do
-    run [opt_bin/"simqd", "run", "--foreground", "--log-file", "#{Dir.home}/Library/Application Support/SimQueue/simqd.log"]
+    run [opt_bin/"simqd", "run", "--foreground", "--log-file",
+         "#{Dir.home}/Library/Application Support/SimQueue/simqd.log"]
     keep_alive true
     log_path File::NULL
     error_log_path File::NULL
@@ -34,6 +36,12 @@ class Simqueue < Formula
   def caveats
     <<~EOS
       SimQueue supports Apple Silicon Macs (arm64) only; Intel Macs are unsupported.
+
+      Optional menu bar app (copy before enabling Launch at Login):
+        mkdir -p ~/Applications
+        cp -R #{opt_prefix}/SimQueue.app ~/Applications/
+        open ~/Applications/SimQueue.app
+      Click the square.stack icon for the dashboard; right-click for quit/stop options.
 
       Set SimQueue up for this Mac (starter config and Xcode checks):
         simq init
@@ -80,6 +88,8 @@ class Simqueue < Formula
     assert_equal version.to_s, shell_output("#{bin}/simqd --version").strip
     assert_equal doc.to_s, shell_output("#{bin}/simq docs").strip
     assert_match "SimQueue #{version} agent guide", shell_output("#{bin}/simq agent-guide")
+    assert_path_exists prefix/"SimQueue.app/Contents/MacOS/SimQueueApp"
+    system "/usr/bin/codesign", "--verify", "--strict", prefix/"SimQueue.app"
     assert_path_exists doc/"AGENTS.md"
     assert_path_exists doc/"docs/INSTALL.md"
     assert_path_exists doc/"skills/simqueue/SKILL.md"
