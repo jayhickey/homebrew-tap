@@ -45,7 +45,7 @@ class Simqueue < Formula
 
       State (queue database, socket, logs, artifacts) lives in
         ~/Library/Application Support/SimQueue
-      `simq uninstall --purge` removes it and the simq-* simulators SimQueue owns.
+      `simq uninstall --yes --purge` removes it and the simq-* simulators SimQueue owns.
     EOS
   end
 
