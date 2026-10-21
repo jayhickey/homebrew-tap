@@ -1,26 +1,31 @@
 # jayhickey/homebrew-tap
 
-Homebrew formulae for [SimQueue](https://github.com/jayhickey/SimQueue).
+Homebrew formulae for tools by [Jay Hickey](https://github.com/jayhickey).
+
+## Installation
 
 ```sh
-brew install jayhickey/tap/simqueue
-simq init
+brew tap jayhickey/tap
+brew install <formula>
 ```
+
+You can also install a formula directly with `brew install jayhickey/tap/<formula>`.
+For setup instructions and available services, run `brew info <formula>` or visit
+the project's documentation.
+
+## Formulae
 
 | Formula | What it installs |
 | --- | --- |
-| `simqueue` | `simq` (CLI) and `simqd` (daemon), universal macOS binaries from the GitHub release. Template slimming with [`simslim`](https://github.com/mobai-app/simslim) is optional. |
+| [`simqueue`](https://github.com/jayhickey/SimQueue) | A per-Mac queue and simulator pool for Xcode builds and tests. Installs `simq` (CLI) and `simqd` (daemon). |
+
+**SimQueue availability:** its formula currently has a placeholder checksum and will
+be installable once the first release is published and the formula is updated.
 
 Homebrew asks you to trust third-party taps before it loads their formulae. If `brew install`
-refuses, trust the specific formula with `brew trust --formula jayhickey/tap/simqueue`.
-If you separately install optional simslim, trust its formula when Homebrew requests it.
-
-To run the daemon as a login service instead of on demand, see `brew info simqueue`
-(`brew services start simqueue`).
+refuses, trust the specific formula with `brew trust --formula jayhickey/tap/<formula>`.
 
 ## Updating
 
-After a verified SimQueue release, update `url` and `sha256` in `Formula/simqueue.rb`
-from its published tarball and checksum. Test the formula before merging the update.
-The initial formula still has a placeholder checksum and cannot be installed from the
-release URL until the first release is published.
+After a verified release, update the corresponding file in `Formula/` with the
+published download URL and SHA-256 checksum. Test the formula before merging the update.
