@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 # SimQueue: one queue per Mac for Xcode builds, tests and iOS simulators.
-# The release workflow in jayhickey/SimQueue opens a PR here that bumps url and sha256 for
-# each v* tag (scripts/bump-formula.sh). Until the first release, url/sha256 are placeholders.
+# Update url and sha256 after a verified SimQueue release.
+# Until the first release, url/sha256 are placeholders.
 class Simqueue < Formula
   desc "Per-Mac queue and simulator pool for Xcode builds, tests and UI tests"
   homepage "https://github.com/jayhickey/SimQueue"
@@ -12,8 +12,7 @@ class Simqueue < Formula
   license "Apache-2.0"
 
   depends_on macos: :sonoma # macOS only (implies depends_on :macos)
-  # Slimmed simulator templates and clones. Lives in its maintainer's tap.
-  depends_on "mobai-app/tap/simslim"
+  # simslim is optional: users install it separately to opt in with template build --slim.
 
   def install
     bin.install "bin/simq", "bin/simqd"
@@ -33,8 +32,12 @@ class Simqueue < Formula
 
   def caveats
     <<~EOS
-      Set SimQueue up for this Mac (starter config, Xcode and simslim checks):
+      Set SimQueue up for this Mac (starter config and Xcode checks):
         simq init
+
+      Optional template slimming:
+        brew install mobai-app/tap/simslim
+        simq template build <project> --slim
 
       simq starts its daemon (simqd) on demand. To keep simqd running as a login
       service instead, set "autostart": false in the config, then:

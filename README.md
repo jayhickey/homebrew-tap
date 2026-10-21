@@ -9,7 +9,7 @@ simq init
 
 | Formula | What it installs |
 | --- | --- |
-| `simqueue` | `simq` (CLI) and `simqd` (daemon), universal macOS binaries from the GitHub release. Depends on [`simslim`](https://github.com/mobai-app/simslim) from `mobai-app/tap`. |
+| `simqueue` | `simq` (CLI) and `simqd` (daemon), universal macOS binaries from the GitHub release. Template slimming with [`simslim`](https://github.com/mobai-app/simslim) is optional. |
 
 Homebrew asks you to trust third-party taps before it loads their formulae. If `brew install`
 refuses, run `brew trust --tap jayhickey/tap` and `brew trust --formula mobai-app/tap/simslim`
@@ -20,7 +20,7 @@ To run the daemon as a login service instead of on demand, see `brew info simque
 
 ## Updating
 
-Each `v*` tag in jayhickey/SimQueue runs its release workflow, which publishes the tarball and
-opens a PR here bumping `url` and `sha256` in `Formula/simqueue.rb`. Review it, check that
-`brew install --build-from-source ./Formula/simqueue.rb` (or the PR's test run) passes, and
-merge.
+After a verified SimQueue release, update `url` and `sha256` in `Formula/simqueue.rb`
+from its published tarball and checksum. Test the formula before merging the update.
+The initial formula still has a placeholder checksum and cannot be installed from the
+release URL until the first release is published.
