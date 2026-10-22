@@ -1,6 +1,6 @@
 cask "simqueue-app" do
-  version "0.1.7"
-  sha256 "d2e50d6206ac20f1b5fd022ede37bd880a07103b70cda6cb34127111b67352c1"
+  version "0.1.8"
+  sha256 "c1412da62ac8f0c0ecb24c1de735973403982ae156d233fdc5d305c9d4e73b6d"
 
   url "https://github.com/jayhickey/SimQueue/releases/download/v#{version}/simqueue-#{version}-macos-arm64.tar.gz"
   name "SimQueue"
