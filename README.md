@@ -60,26 +60,43 @@ documentation, and run the formula test before publishing an update.
 brew install --cask jayhickey/tap/simqueue-app
 ```
 
-The cask installs `SimQueue.app` into `/Applications` and installs the CLI formula
-if it is missing. Existing CLI users can add just the app with the same command.
-Launch it through Spotlight or Applications; Launch at Login is opt-in in its menu.
-The app connects to your existing daemon; installation does not start services.
-For an existing older daemon, follow the planned upgrade guide before using the
-app's daemon stop controls (requires v0.1.4+).
+The cask is the app setup: it installs `SimQueue.app` and links the app's own
+`simq` (`SimQueue.app/Contents/Helpers/simq`), so Sparkle updates the CLI and the
+bundled daemon together. It does not install or need the formula. Use one setup:
+run `brew uninstall simqueue` before installing the cask. Launch the app through
+Spotlight or Applications; Launch at Login is opt-in in its menu. Installation does
+not start services. With `"autostart": false`, start the bundled daemon with
+**Use Bundled Daemon…** or `SimQueueApp --register-daemon`.
 
-Quit the menu bar app before `brew upgrade --cask simqueue-app`. Upgrade the CLI
-separately with `brew upgrade simqueue` after following the planned daemon upgrade
-procedure. Keep both packages on the same release when available. Removing the app
-with `brew uninstall --cask simqueue-app` leaves the CLI, running daemon, simulator
-pool and queue data intact. No cask uninstall or zap hook removes shared data.
+The app installs into `/Applications`. For `~/Applications`, pass
+`--appdir=~/Applications`, or set `HOMEBREW_CASK_OPTS="--appdir=~/Applications"` in
+your shell profile. Keep the same appdir on every reinstall and upgrade so the
+bundled daemon's path stays stable; a reinstall with a different appdir can leave an
+empty `SimQueue.app` folder behind.
 
-The app is ad-hoc signed, not notarized. Follow macOS security policy; do not disable
-Gatekeeper or strip quarantine attributes. If you manually copied an earlier app
-into Applications, quit it and move that copy aside before installing the cask.
-See the [menu bar guide](https://github.com/jayhickey/SimQueue/blob/main/docs/MENU_BAR.md).
+If both setups end up installed, `simq` follows the order:
+
+- Cask, then formula: the formula overwrites the cask's link. Restore it with
+  `brew uninstall simqueue && brew link --cask simqueue-app`.
+- Formula, then cask: the cask skips its link. After `brew uninstall simqueue`,
+  run `brew reinstall --cask jayhickey/tap/simqueue-app` (stop the bundled daemon
+  first if it is registered).
+
+Quit the menu bar app before `brew upgrade --cask simqueue-app`. Removing the app
+with `brew uninstall --cask simqueue-app` removes the app and its `simq` link; the
+simulator pool and queue data stay intact. No cask uninstall or zap hook removes
+shared data. Stop the bundled daemon before uninstalling.
+
+The app is Developer ID signed and notarized by Apple. Do not disable Gatekeeper or
+strip quarantine attributes. If you manually copied an earlier app into
+Applications, quit it and move that copy aside before installing the cask. See the
+[menu bar guide](https://github.com/jayhickey/SimQueue/blob/main/docs/MENU_BAR.md)
+and [switching setups](https://github.com/jayhickey/SimQueue/blob/main/docs/INSTALL.md#switching-between-the-formula-and-the-cask).
 
 ## Maintaining the app cask
 
 Update formula and cask versions/checksums together from the actual public release.
-Check that the staged app path matches the archive, the formula dependency is retained,
-and cask uninstall never stops the daemon or removes shared state.
+Check that the staged app path matches the archive, the cask links the app's bundled
+`simq` without depending on the formula, and cask uninstall never stops the daemon or
+removes shared state. SimQueue's release workflow updates only versions and checksums;
+edit caveats and this README here.
