@@ -1,6 +1,6 @@
 cask "simqueue-app" do
-  version "0.1.5"
-  sha256 "031442abe676b7bf52b93f7b827c1fc9fe22eeaf9c0801a6547efe7d2aa586a6"
+  version "0.1.7"
+  sha256 "d2e50d6206ac20f1b5fd022ede37bd880a07103b70cda6cb34127111b67352c1"
 
   url "https://github.com/jayhickey/SimQueue/releases/download/v#{version}/simqueue-#{version}-macos-arm64.tar.gz"
   name "SimQueue"
@@ -25,8 +25,7 @@ cask "simqueue-app" do
       https://github.com/jayhickey/SimQueue/blob/main/docs/INSTALL.md#planned-upgrade
     App shutdown controls require a daemon from v0.1.5 or later.
 
-    This app is ad-hoc signed and is not notarized. macOS may require explicit
-    approval under its normal security policy. Do not disable Gatekeeper.
+    This app is Developer ID signed and notarized by Apple.
     Removing the cask leaves the CLI, daemon and queue data intact.
   EOS
 end
