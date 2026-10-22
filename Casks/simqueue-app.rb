@@ -18,18 +18,26 @@ cask "simqueue-app" do
   caveats <<~EOS
     Launch SimQueue from Applications, then click the square.stack menu bar icon
     to open the dashboard. Right-click for app and daemon quit options.
-    Configure the CLI with simq init and start the configured daemon with
-    simq status or your existing login service. Installing this cask does not
-    start or restart the daemon, or enable Launch at Login.
+    Configure SimQueue with simq init. Installing this cask does not start or
+    restart the daemon, or enable Launch at Login. With "autostart": false, start
+    the app's bundled daemon with Use Bundled Daemon… in the menu, or run:
+      "#{appdir}/SimQueue.app/Contents/MacOS/SimQueueApp" --register-daemon
 
     Quit the menu bar app before upgrading it. Follow the planned daemon upgrade
-    instructions before upgrading the CLI or restarting a running daemon:
+    instructions before upgrading the app or restarting a running daemon:
       https://github.com/jayhickey/SimQueue/blob/main/docs/INSTALL.md#planned-upgrade
     App shutdown controls require a daemon from v0.1.5 or later.
+
+    The app installs into /Applications. For ~/Applications, pass
+    --appdir=~/Applications or set HOMEBREW_CASK_OPTS="--appdir=~/Applications".
+    Keep the same appdir on every reinstall and upgrade so the bundled daemon's
+    path stays stable.
 
     This app is Developer ID signed and notarized by Apple.
     This cask links simq from the app, so Sparkle updates simq and simqd together.
     It replaces the simqueue formula: brew uninstall simqueue first.
+    Installing the formula later takes over the simq link. To restore it:
+      brew uninstall simqueue && brew link --cask simqueue-app
     Removing the cask removes the app and its simq link; queue data stays intact.
   EOS
 end

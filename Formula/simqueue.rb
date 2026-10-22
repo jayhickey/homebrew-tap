@@ -42,6 +42,8 @@ class Simqueue < Formula
       then uninstall this formula first:
         brew uninstall simqueue
         brew install --cask jayhickey/tap/simqueue-app
+      Installed after the simqueue-app cask, this formula takes over its simq link.
+      To go back to the app's simq: brew uninstall simqueue && brew link --cask simqueue-app
 
       Set SimQueue up for this Mac (starter config and Xcode checks):
         simq init
