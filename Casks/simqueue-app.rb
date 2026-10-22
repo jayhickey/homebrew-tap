@@ -1,6 +1,6 @@
 cask "simqueue-app" do
-  version "0.1.13"
-  sha256 "8b53166ef68546debef25e584bc7ef343cdeede9c5e48bc552495d7edf13db0f"
+  version "0.1.14"
+  sha256 "78e5d38c802850797b6949f5f2859008e8d77acae678c395259d4c8e0310062c"
 
   auto_updates true
 
@@ -10,10 +10,10 @@ cask "simqueue-app" do
   homepage "https://github.com/jayhickey/SimQueue"
 
   depends_on arch: :arm64
-  depends_on formula: "jayhickey/tap/simqueue"
   depends_on macos: :sonoma
 
   app "simqueue-#{version}-macos-arm64/SimQueue.app"
+  binary "#{appdir}/SimQueue.app/Contents/Helpers/simq"
 
   caveats <<~EOS
     Launch SimQueue from Applications, then click the square.stack menu bar icon
@@ -28,6 +28,8 @@ cask "simqueue-app" do
     App shutdown controls require a daemon from v0.1.5 or later.
 
     This app is Developer ID signed and notarized by Apple.
-    Removing the cask leaves the CLI, daemon and queue data intact.
+    This cask links simq from the app, so Sparkle updates simq and simqd together.
+    It replaces the simqueue formula: brew uninstall simqueue first.
+    Removing the cask removes the app and its simq link; queue data stays intact.
   EOS
 end
