@@ -36,9 +36,12 @@ class Simqueue < Formula
     <<~EOS
       SimQueue supports Apple Silicon Macs (arm64) only; Intel Macs are unsupported.
 
-      Optional menu bar app (installed into Applications separately):
+      This formula is the CLI-only setup: simq and simqd, no menu bar app.
+      The menu bar app setup is the simqueue-app cask, which ships its own simq
+      inside the app. Use one setup or the other. To switch to the app, drain,
+      then uninstall this formula first:
+        brew uninstall simqueue
         brew install --cask jayhickey/tap/simqueue-app
-      Click the square.stack icon for the dashboard; right-click for quit/stop options.
 
       Set SimQueue up for this Mac (starter config and Xcode checks):
         simq init
