@@ -6,8 +6,8 @@
 class Simqueue < Formula
   desc "Per-Mac queue and simulator pool for Xcode builds, tests and UI tests"
   homepage "https://github.com/jayhickey/SimQueue"
-  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.24/simqueue-0.1.24-macos-arm64.tar.gz"
-  sha256 "89eff67f41166d991d5a2ecd81fbdb0a8f35599f03923d5d955d6ffb1f2e7480"
+  url "https://github.com/jayhickey/SimQueue/releases/download/v0.1.25/simqueue-0.1.25-macos-arm64.tar.gz"
+  sha256 "ca57b30f0795b5b7c389251180f660d0014a6d1201881cb30514a2b3d2f01c72"
   license "MIT"
 
   depends_on arch: :arm64
