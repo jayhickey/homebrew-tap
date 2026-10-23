@@ -1,6 +1,6 @@
 cask "simqueue-app" do
-  version "0.1.23"
-  sha256 "4f3c1d767d3b8fbf0ae69ebbdd0bf22a9a853100a7d803e7f5a282c47619bb8f"
+  version "0.1.24"
+  sha256 "89eff67f41166d991d5a2ecd81fbdb0a8f35599f03923d5d955d6ffb1f2e7480"
 
   auto_updates true
 
